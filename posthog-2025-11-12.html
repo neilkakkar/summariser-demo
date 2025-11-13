@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .summary {
+            background-color: #f0f4ff;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+        .section {
+            margin: 30px 0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 3px solid #e0e0e0;
+        }
+        .item-summary {
+            margin-bottom: 8px;
+        }
+        .item-links {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .item-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+        .item-link:hover {
+            background-color: #2980b9;
+        }
+        .impact {
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Hey Tim! 👋</div>
+        <p>Here's what's been cooking in <strong>PostHog/posthog</strong> on 12th November 2025:</p>
+        <div class="summary">This release introduces several significant features and improvements across the codebase. The experiments module now supports breakdowns on metric queries, enabling more granular analysis, and includes UI/UX enhancements for shipping variants and metric refreshes. The session explorer feature is introduced, providing a new way to debug sessions, alongside multiple session-related bug fixes and optimizations. Data warehouse and external data source integrations see major improvements, including resumable syncs, BigQuery region configuration, and increased reliability for long-running jobs. Additional enhancements include improved logs filtering and actions, ClickHouse version upgrades for CI, and a new exact time range option for trends insights. Numerous bug fixes and UI tweaks further improve stability and usability throughout the application.</div>
+        <div class="section">
+            <div class="section-title">📌 Experiments & Metrics</div>
+            <div class="item">
+                <div class="item-summary">Added support for breakdowns on experiment metric queries, allowing users to analyze metrics by event properties with backend and schema changes.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/40520" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Enables more granular experiment analysis; check for performance or correctness issues in experiment results.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Metrics now refresh automatically when metric fields are modified, ensuring up-to-date results after duplication or edits.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41332" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces confusion from stale metric results; look here if experiment metrics seem out of sync.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added descriptions to flag conditions created by the 'Ship variant' feature, improving clarity for users.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41341" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves user understanding of automatically added flag conditions.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Improved the 'Ship variant' modal by combining conclusion fields and adding celebratory animation.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41283" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Enhances user experience when shipping experiment variants.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed passing of experiment objects to timeseries logic after a refactor.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41340" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Prevents broken timeseries charts in experiments.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Dagster jobs for experiments now distinguish between real and insufficient data errors, improving error handling.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41282" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces noise in Dagster failure alerts; real failures are easier to spot.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Sessions & Session Explorer</div>
+            <div class="item">
+                <div class="item-summary">Introduced a new session explorer tab and session profile with detailed session information, behind a feature flag.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41140" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Provides a new way to debug and analyze sessions; may surface new bugs or performance issues.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Refactored session data queries and added person property retrieval to reduce OOM errors and improve performance.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41392" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Session data queries should be faster and less likely to cause OOM; check here if session data is missing or slow.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed negative session length display and made session timelines collapsed by default for better usability.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41382" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves session timeline readability; look here if session lengths appear incorrect.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added concurrency limits to session backfill jobs to prevent 'Too Many Parts' errors.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41339" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces risk of database overload during session backfills.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Data Warehouse & External Data Integrations</div>
+            <div class="item">
+                <div class="item-summary">Introduced resumable sources for data warehouse syncs, allowing jobs to resume after interruptions and reducing repeated work.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41047" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves reliability of long-running syncs (e.g., Stripe); check here if syncs resume incorrectly or data is duplicated.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added location as a configurable option for BigQuery sources, fixing sync failures for region-specific datasets.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41300" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: BigQuery syncs should succeed for regional datasets; check here if region errors persist.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Increased retries and improved logging for resumable sources in the data warehouse.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41375" target="_blank" class="item-link">View PR 🔗</a>
+                    <a href="https://github.com/PostHog/posthog/pull/41372" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: More resilient data imports; look here if jobs are retrying unexpectedly or logs are unclear.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed heartbeat timeout reporting for data warehouse imports by correctly handling heartbeat details.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41401" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves reliability of import status reporting; check here if imports appear stuck.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Logs & Error Tracking</div>
+            <div class="item">
+                <div class="item-summary">Replaced SearchTermFilter with LogsFilterGroup for logs, improving filtering performance and usability.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41369" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Logs filtering should be faster and more intuitive; check here if logs search behaves unexpectedly.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added an action column to LogsTable for row-specific actions, including copying log messages.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41394" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves log usability; look here if log actions are missing or broken.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Logs now include the token when a team is not found, aiding debugging of ingestion issues.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41378" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Easier to debug 'team_not_found' errors in logs.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed test ordering for error tracking breakdowns to match actual query behavior.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41370" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces test flakiness for error tracking breakdowns.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Improved performance and accuracy of the similar issues query runner in error tracking.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41055" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Similar issues queries should be faster and more accurate; check here if results are missing or slow.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">✨ Feature Flags & Redis Reliability</div>
+            <div class="item">
+                <div class="item-summary">Improved resilience of feature flags service by gracefully falling back to shared Redis if dedicated Redis is unavailable.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41316" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Feature flags should remain available even if dedicated Redis is misconfigured; check here if flags fail to load.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">⚡ Web Analytics & Performance</div>
+            <div class="item">
+                <div class="item-summary">Increased query concurrency for web vitals and marketing analytics, making queries faster.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41317" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Web vitals dashboards should load faster; check here if query load increases unexpectedly.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Optimized web vitals queries to use only selected quantiles, reducing query count and improving performance.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/5fafbe3f51d1cf11d5b3da67f351b88e8bc7ca3d" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Web vitals queries should be more efficient; check here if data appears incomplete.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 ClickHouse & Backend Infrastructure</div>
+            <div class="item">
+                <div class="item-summary">Upgraded ClickHouse to 25.8.11.66 for CI and local development, addressing performance and bug issues.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41358" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: CI and local dev should be more stable; check here if new ClickHouse-specific bugs appear.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added precalculated_events and cohort_membership tables for real-time cohort analysis.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41279" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Enables new cohort features; check here if cohort queries behave unexpectedly.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🚀 UI/UX Improvements & Miscellaneous</div>
+            <div class="item">
+                <div class="item-summary">Refactored sidebar and pinned folder logic in preparation for 'My apps' option.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41315" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Sidebar layout may change; check here if navigation is broken.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Users can now select whether goal line labels appear at the start or end of the line in charts.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41351" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves chart readability; check here if goal line labels are misplaced.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added an 'exact time range' option for trends insights, improving filtering accuracy.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/40898" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Trends insights should reflect the selected date range more precisely.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed GitLab icon display on login screen by reverting to the colored icon.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41303" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Restores correct branding on login page.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Improved Customer Analytics properties by auto-pinning key properties and fixing UI hitboxes.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41236" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Enhances usability of person/account canvases.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🐛 API, Integrations & Backend Fixes</div>
+            <div class="item">
+                <div class="item-summary">Fixed sending JSON to GitHub API endpoint to resolve 415 errors.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41400" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: GitHub integrations should work reliably; check here if GitHub webhooks fail.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Updated Microsoft Teams webhook validation to support new Power Platform URLs before deprecation.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41202" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Prevents breakage for Microsoft Teams integrations after Nov 30.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Chore & Dependency Updates</div>
+            <div class="item">
+                <div class="item-summary">Updated posthog-js to latest versions in multiple packages.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41377" target="_blank" class="item-link">View PR 🔗</a>
+                    <a href="https://github.com/PostHog/posthog/pull/41353" target="_blank" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: May affect frontend tracking; check here if analytics events are missing.</div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Keep shipping amazing things! 🚢</p>
+            <p><em>This summary was auto-generated from commits on 12th November 2025.</em></p>
+        </div>
+    </div>
+</body>
+</html>
