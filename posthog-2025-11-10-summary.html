@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .summary {
+            background-color: #f0f4ff;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+        .section {
+            margin: 30px 0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .item {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 3px solid #e0e0e0;
+        }
+        .item-summary {
+            margin-bottom: 8px;
+        }
+        .item-links {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .item-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+        .item-link:hover {
+            background-color: #2980b9;
+        }
+        .impact {
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Hey Tim! 👋</div>
+        <p>Here's what's been cooking in <strong>PostHog/posthog</strong> on 10th November 2025:</p>
+        <div class="summary">This release features several important improvements across the codebase. The frontend now allows users to link feature flags to experiments and search for experiment keys, enhancing usability for experimentation workflows. Backend changes include fixes to cohort and MSSQL query routing, a refactor of saved query materialization logic, and optimizations for person update queries to avoid unnecessary writes. Activity log subscriptions are now more flexible, and permissions for toggling team-level activity logs have been tightened. There are also notable refactors and bug fixes in the plugin server, Rust code, and CI workflows. Several changes address performance and reliability, particularly around cohort creation, session processing, and data import partitioning.</div>
+        <div class="section">
+            <div class="section-title">✨ Feature Flags & Experiments</div>
+            <div class="item">
+                <div class="item-summary">Added bidirectional linking between feature flags and experiments, and enabled searching for experiment keys on the feature flags page.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41298" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Users can now more easily trace which experiments are powered by which flags, improving experiment management. Look here if experiment/flag connections seem off or search isn't working.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Feature flag keys are now validated to only allow letters, numbers, underscores, and hyphens.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41191" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Prevents creation of invalid feature flags that could cause downstream errors. If flag creation fails unexpectedly, check for invalid characters.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Cohort & Query Handling</div>
+            <div class="item">
+                <div class="item-summary">Cohort queries are now routed to the correct database using the DB router, respecting reader/writer separation.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41312" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces risk of read/write errors in environments with separate DBs. If cohort queries fail or return unexpected results, verify DB routing.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed cohort creation activity log to avoid including person counts, preventing Kafka message size errors and serialization issues.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41311" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Cohort creation should be more reliable, especially for large static cohorts. If cohort creation fails, check activity log handling.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Reverted and then re-applied the fix to remove people from cohort creation activity logs, iterating to resolve production exceptions.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41304" class="item-link">View PR 🔗</a>
+                    <a href="https://github.com/PostHog/posthog/pull/41290" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Ensures cohort creation does not fail due to oversized Kafka messages or type errors. If issues persist, review recent cohort activity log changes.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Saved Queries & Data Warehouse</div>
+            <div class="item">
+                <div class="item-summary">Refactored saved query handling by consolidating model path setup and materialization logic.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/40494" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves maintainability and reliability of saved queries. If saved queries fail to materialize or schedule, check this refactor.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🚀 Session & Dagster Improvements</div>
+            <div class="item">
+                <div class="item-summary">Session processing reverted to sharded->distributed approach with improved error handling and memory/query tagging.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41280" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Session ingestion should be more robust. If session data is missing or errors increase, review these changes.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Fixed Dagster tags to be added inside ThreadPoolExecutor workers for proper logging.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41291" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Dagster job logs should now correctly include tags. If tags are missing, check this logic.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added analytics platform Slack alerts for Dagster job failures.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41274" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Failures in analytics platform jobs will now be surfaced in Slack. If alerts are missing, verify JobOwner configuration.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added documentation on how to add new teams to Dagster.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41278" class="item-link">View PR 🔗</a>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🚀 Database & Data Import Improvements</div>
+            <div class="item">
+                <div class="item-summary">Fixed MSSQL syncs by restructuring queries to avoid ORDER BY errors in views/subqueries.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41285" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: MSSQL data imports should no longer fail due to ORDER BY clause errors. If syncs break, check query structure.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Added time-based partitioning configuration for Zendesk data imports.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41084" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves scalability and performance of Zendesk imports. If import performance degrades, review partition config.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Optimized messaging record updates by using bulk updates, reducing PostgreSQL load.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41310" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Should reduce DB load for bulk messaging operations. If DB performance issues arise, check this update.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🔧 Plugin Server & Person Model Refactors</div>
+            <div class="item">
+                <div class="item-summary">Person update queries now avoid unnecessary writes to immutable fields, enabling HOT updates and improving performance.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41250" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Person queries should be faster. If performance regresses or person updates behave oddly, check this change.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Activity Log & Permissions</div>
+            <div class="item">
+                <div class="item-summary">Users can now subscribe to activity logs for resource types or specific items via the sidebar, replacing the old Subscriptions tab.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41227" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Improves user control over activity log notifications. If users miss or get unwanted notifications, review this logic.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Restricted the ability to toggle org-level activity logs to owners/admins only.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41213" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Prevents unauthorized users from changing team activity log settings. If users can't toggle as expected, check permissions.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Authentication & Integration</div>
+            <div class="item">
+                <div class="item-summary">Fixed issue causing unnecessary reauthentication when changing organizations.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41228" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Switching orgs should be smoother. If users are prompted for passwords unexpectedly, check this fix.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Email domain reuse is now allowed within organizations, not just per team.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41209" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Makes it easier for orgs to share domains across projects. If domain reuse is blocked incorrectly, check this logic.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Developer Experience & CI</div>
+            <div class="item">
+                <div class="item-summary">Refactored MCP to use global monorepo oxlint and prettier configs, removing redundant config files.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41233" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Simplifies linting and formatting for MCP. If linting/formatting breaks, check config consolidation.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Updated missing LogsScene snapshots and improved CI regex for Storybook retries.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41306" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces CI flakiness for Storybook snapshot tests. If snapshot errors are missed, check regex.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📌 Rust Codebase Maintenance</div>
+            <div class="item">
+                <div class="item-summary">Fixed new Clippy lint errors and removed redundant Kafka message modules.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41292" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Keeps Rust codebase up-to-date with latest linting standards. If Rust builds fail, check for missed lints.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Aligned Redis config in feature flags service with Django pattern, removing redundant writer URLs.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41222" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Reduces config confusion and risk of misconfiguration. If Redis connections fail, check environment variables.</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🚀 Miscellaneous Improvements</div>
+            <div class="item">
+                <div class="item-summary">Improved logging for primary keys in Postgres data import sources.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41288" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Easier debugging for Postgres imports. If import issues arise, check logs for primary key info.</div>
+            </div>
+            <div class="item">
+                <div class="item-summary">Ensured posthog-recorder is used in dev for team 2, fixing local testing assumptions.</div>
+                <div class="item-links">
+                    <a href="https://github.com/PostHog/posthog/pull/41178" class="item-link">View PR 🔗</a>
+                </div>
+                <div class="impact">💡 Impact: Local dev should better reflect production for session replay. If recorder issues persist, check this logic.</div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Keep shipping amazing things! 🚢</p>
+            <p><em>This summary was auto-generated from commits on 10th November 2025.</em></p>
+        </div>
+    </div>
+</body>
+</html>
